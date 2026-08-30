@@ -414,7 +414,13 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
 .build__bar{height:2px;background:var(--line-dark);position:relative;margin-top:9px}
 .build__bar i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--amber);transition:width .5s var(--ease)}
 
-.build__list{display:grid}
+/* pe mobil (o singura coloana) textul e afisat live in panoul sticky,
+   ca sa nu se mai suprapuna peste lista de dedesubt care e doar spatiu de scroll */
+.build__caption{padding-top:14px;margin-top:10px;border-top:1px solid var(--line-dark)}
+.build__caption .build__k{margin-bottom:8px}
+.build__capTitle{font-size:22px;color:#fff;margin-bottom:8px}
+.build__capDesc{font-size:14px;color:#B9C2C8;line-height:1.6;max-width:46ch}
+.build__list{display:grid;opacity:0}
 .build__item{
   min-height:56vh;display:flex;flex-direction:column;justify-content:center;
   padding:20px 0;border-bottom:1px solid var(--line-dark);
@@ -572,6 +578,8 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   .build{grid-template-columns:1fr 1fr;gap:54px}
   /* fara align-self:start - coloana trebuie sa se intinda ca sticky sa aiba pe unde calatori */
   .build__sticky{top:calc(var(--header-h) + 40px);padding:0;background:transparent;height:max-content}
+  .build__caption{display:none}
+  .build__list{opacity:1}
   .build__stage{max-height:none}
   .build__item{min-height:68vh}
   .about{grid-template-columns:1fr 1.05fr;gap:52px}
@@ -930,6 +938,12 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
           <span class="nm" id="buildName">Fundatie</span>
         </div>
         <div class="build__bar"><i id="buildBar"></i></div>
+
+        <div class="build__caption">
+          <span class="build__k" id="buildCapK">Etapa 01</span>
+          <h3 class="build__capTitle" id="buildCapTitle">Fundatie</h3>
+          <p class="build__capDesc" id="buildCapDesc">Sapatura, cofrajul, armarea si turnarea betonului. Aici se decide cat de drept sta casa peste 30 de ani, asa ca nu se grabeste nimeni.</p>
+        </div>
       </div>
 
       <ol class="build__list">
@@ -1474,6 +1488,9 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   var hudN = document.getElementById('buildN');
   var hudName = document.getElementById('buildName');
   var hudBar = document.getElementById('buildBar');
+  var capK = document.getElementById('buildCapK');
+  var capTitle = document.getElementById('buildCapTitle');
+  var capDesc = document.getElementById('buildCapDesc');
   var totalStages = stages.length;
   var stageNow = 0;
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1487,9 +1504,18 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
     stages.forEach(function (it, i) { it.classList.toggle('is-on', i < n); });
     var svg = build.querySelector('.build__svg');
     if (svg) { svg.classList.toggle('is-done', n >= totalStages); }
+    var active = stages[Math.max(n, 1) - 1];
     hudN.textContent = n < 10 ? '0' + n : String(n);
-    hudName.textContent = stages[Math.max(n, 1) - 1].getAttribute('data-name');
+    hudName.textContent = active.getAttribute('data-name');
     hudBar.style.width = (n / totalStages * 100) + '%';
+    if (capTitle) {
+      var k = active.querySelector('.build__k');
+      var h = active.querySelector('h3');
+      var p = active.querySelector('p');
+      if (k) capK.textContent = k.textContent;
+      if (h) capTitle.textContent = h.textContent;
+      if (p) capDesc.textContent = p.textContent;
+    }
   }
 
   /* etapa activa = cea al carei centru e cel mai aproape de mijlocul ecranului */
