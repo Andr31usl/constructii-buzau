@@ -399,7 +399,7 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
 /* ---------- etapele constructiei (animatie la scroll) ---------- */
 .build{display:grid;gap:0}
 .build__sticky{
-  position:sticky;top:calc(var(--header-h) + 6px);z-index:2;
+  position:static;z-index:2;
   background:var(--ink);padding:10px 0 14px;
 }
 .build__stage{position:relative;aspect-ratio:4/3;max-height:40vh;width:100%;border:1px solid var(--line-dark)}
@@ -571,7 +571,7 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   .section{padding:96px 0}
   .build{grid-template-columns:1fr 1fr;gap:54px}
   /* fara align-self:start - coloana trebuie sa se intinda ca sticky sa aiba pe unde calatori */
-  .build__sticky{top:calc(var(--header-h) + 40px);padding:0;background:transparent;height:max-content}
+  .build__sticky{position:sticky;top:calc(var(--header-h) + 40px);padding:0;background:transparent;height:max-content}
   .build__stage{max-height:none}
   .build__item{min-height:68vh}
   .about{grid-template-columns:1fr 1.05fr;gap:52px}
