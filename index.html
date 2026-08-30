@@ -557,8 +557,8 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
   .reveal{opacity:1;transform:none}
-  .lay{opacity:1;transform:none}
-  .build__item{opacity:1}
+  /* etapele casei raman legate de scroll si aici: sunt continut, nu decor.
+     Regula globala de mai sus le taie doar tranzitiile, deci apar instant. */
 }
 
 /* ==========================================================================
@@ -1503,7 +1503,6 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   var capDesc = document.getElementById('buildCapDesc');
   var totalStages = stages.length;
   var stageNow = 0;
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var capHead = document.getElementById('buildCapHead');
 
@@ -1541,7 +1540,7 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
 
   /* etapa activa = cea al carei centru e cel mai aproape de mijlocul ecranului */
   function updateBuild() {
-    if (!totalStages || reduced) return;
+    if (!totalStages) return;
     var rect = build.getBoundingClientRect();
     if (rect.bottom < 0 || rect.top > window.innerHeight) return;
     var mid = window.innerHeight / 2;
@@ -1553,8 +1552,6 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
     });
     setStage(best);
   }
-
-  if (reduced) { setStage(totalStages); }
 
   var ticking = false;
   window.addEventListener('scroll', function () {
