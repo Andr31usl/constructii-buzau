@@ -430,8 +430,9 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   to{opacity:1;transform:none}
 }
 .build__list{display:grid;opacity:0}
+/* cat trebuie derulat pentru o etapa. Mai mare = etapele se schimba mai greu. */
 .build__item{
-  min-height:56vh;display:flex;flex-direction:column;justify-content:center;
+  min-height:85vh;display:flex;flex-direction:column;justify-content:center;
   padding:20px 0;border-bottom:1px solid var(--line-dark);
   opacity:.32;transition:opacity .45s var(--ease);
 }
@@ -590,7 +591,7 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   .build__caphead,.build__capDesc{display:none}
   .build__list{opacity:1}
   .build__stage{max-height:none}
-  .build__item{min-height:68vh}
+  .build__item{min-height:90vh}
   .about{grid-template-columns:1fr 1.05fr;gap:52px}
   .contact{grid-template-columns:1fr 1fr;gap:40px}
   .footer__grid{grid-template-columns:1.5fr 1fr 1.2fr}
@@ -1544,12 +1545,17 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
     var rect = build.getBoundingClientRect();
     if (rect.bottom < 0 || rect.top > window.innerHeight) return;
     var mid = window.innerHeight / 2;
-    var best = 1, bestDist = Infinity;
+    var best = 1, bestDist = Infinity, distActuala = Infinity;
     stages.forEach(function (it, i) {
       var r = it.getBoundingClientRect();
       var d = Math.abs((r.top + r.bottom) / 2 - mid);
       if (d < bestDist) { bestDist = d; best = i + 1; }
+      if (i + 1 === stageNow) { distActuala = d; }
     });
+    /* zona moarta: cat timp etapa curenta e la fel de aproape de centru,
+       nu o schimbam. Fara asta, la limita dintre doua etape orice
+       tremurat al degetului sau bounce-ul de scroll le face sa alterneze. */
+    if (stageNow && best !== stageNow && bestDist + 80 > distActuala) return;
     setStage(best);
   }
 
