@@ -35,7 +35,9 @@ Cum lucram - Garantii - Testimoniale - Contact - Footer
 | Placeholder | Unde apare |
 |---|---|
 | `[NUME FIRMA]` | title, header, hero, footer |
-| `40700000000` | variabila `WHATSAPP` din JS, linkurile `wa.me` si `tel:` |
+| `07XX XXX XXX` | numarul afisat, in header, contact si footer |
+| `407XXXXXXXX` | variabila `WHATSAPP` din JS si linkurile `wa.me` |
+| `tel:07XXXXXXXX` | toate linkurile de apelare |
 | `Str. [Strada] nr. [X]` | contact, footer |
 | `oferte@[domeniu].ro` | contact, footer |
 | `[XX]`, `[XXX]`, `[XXXX]` | cifre din hero, lucrari si detalii tehnice |
