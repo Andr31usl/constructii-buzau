@@ -83,8 +83,6 @@ h1,h2,h3,h4{
 .section--dark{background:var(--ink);color:var(--concrete)}
 .section--sand{background:var(--sand)}
 section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
-/* animatia de constructie la scroll ramane doar pe ecrane mari, unde are loc pe 2 coloane */
-#etape{display:none}
 
 /* eticheta mono - eticheta de sectiune, nu numerotare decorativa */
 .label{
@@ -418,10 +416,19 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
 
 /* pe mobil (o singura coloana) textul e afisat live in panoul sticky,
    ca sa nu se mai suprapuna peste lista de dedesubt care e doar spatiu de scroll */
-.build__caption{padding-top:14px;margin-top:10px;border-top:1px solid var(--line-dark)}
-.build__caption .build__k{margin-bottom:8px}
-.build__capTitle{font-size:22px;color:#fff;margin-bottom:8px}
-.build__capDesc{font-size:14px;color:#B9C2C8;line-height:1.6;max-width:46ch}
+/* pe telefon: titlul deasupra desenului, descrierea dedesubt, iar casa
+   ramane fixa intre ele si trece de la o etapa la alta */
+.build__caphead{margin-bottom:14px}
+.build__caphead .build__k{margin-bottom:6px}
+.build__capTitle{font-size:26px;color:#fff}
+.build__capDesc{font-size:14.5px;color:#B9C2C8;line-height:1.65;max-width:46ch;margin-top:16px}
+
+/* glisarea dintre etape; directia o pune JS-ul in --dir */
+.build__caphead.gliseaza,.build__capDesc.gliseaza{animation:glisare .42s var(--ease) both}
+@keyframes glisare{
+  from{opacity:0;transform:translateY(calc(var(--dir,1) * 18px))}
+  to{opacity:1;transform:none}
+}
 .build__list{display:grid;opacity:0}
 .build__item{
   min-height:56vh;display:flex;flex-direction:column;justify-content:center;
@@ -577,11 +584,10 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
 
 @media (min-width:900px){
   .section{padding:96px 0}
-  #etape{display:block}
   .build{grid-template-columns:1fr 1fr;gap:54px}
   /* fara align-self:start - coloana trebuie sa se intinda ca sticky sa aiba pe unde calatori */
   .build__sticky{top:calc(var(--header-h) + 40px);padding:0;background:transparent;height:max-content}
-  .build__caption{display:none}
+  .build__caphead,.build__capDesc{display:none}
   .build__list{opacity:1}
   .build__stage{max-height:none}
   .build__item{min-height:68vh}
@@ -648,10 +654,11 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   <nav aria-label="Meniu mobil">
     <a href="#despre">Despre <i>01</i></a>
     <a href="#servicii">Servicii <i>02</i></a>
-    <a href="#lucrari">Lucrari <i>03</i></a>
-    <a href="#proces">Cum lucram <i>04</i></a>
-    <a href="#garantii">Garantii <i>05</i></a>
-    <a href="#contact">Contact <i>06</i></a>
+    <a href="#etape">Etapele lucrarii <i>03</i></a>
+    <a href="#lucrari">Lucrari <i>04</i></a>
+    <a href="#proces">Cum lucram <i>05</i></a>
+    <a href="#garantii">Garantii <i>06</i></a>
+    <a href="#contact">Contact <i>07</i></a>
   </nav>
   <div class="drawer__actions">
     <a class="btn btn--block" href="#contact">Cere o oferta</a>
@@ -840,6 +847,11 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
 
     <div class="build" id="build">
       <div class="build__sticky">
+        <div class="build__caphead" id="buildCapHead">
+          <span class="build__k" id="buildCapK">Etapa 01</span>
+          <h3 class="build__capTitle" id="buildCapTitle">Fundatie</h3>
+        </div>
+
         <div class="build__stage">
           <svg class="build__svg" viewBox="0 0 400 300" role="img" aria-label="Desen care arata etapele constructiei unei case">
             <defs>
@@ -941,11 +953,7 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
         </div>
         <div class="build__bar"><i id="buildBar"></i></div>
 
-        <div class="build__caption">
-          <span class="build__k" id="buildCapK">Etapa 01</span>
-          <h3 class="build__capTitle" id="buildCapTitle">Fundatie</h3>
-          <p class="build__capDesc" id="buildCapDesc">Sapatura, cofrajul, armarea si turnarea betonului. Aici se decide cat de drept sta casa peste 30 de ani, asa ca nu se grabeste nimeni.</p>
-        </div>
+        <p class="build__capDesc" id="buildCapDesc">Sapatura, cofrajul, armarea si turnarea betonului. Aici se decide cat de drept sta casa peste 30 de ani, asa ca nu se grabeste nimeni.</p>
       </div>
 
       <ol class="build__list">
@@ -1497,9 +1505,20 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   var stageNow = 0;
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  var capHead = document.getElementById('buildCapHead');
+
   function setStage(n) {
     if (n === stageNow || !totalStages) return;
+    var inJos = n > stageNow;
     stageNow = n;
+    /* textul intra glisand din directia in care derulezi */
+    [capHead, capDesc].forEach(function (el) {
+      if (!el) return;
+      el.classList.remove('gliseaza');
+      el.style.setProperty('--dir', inJos ? '1' : '-1');
+      void el.offsetWidth;               /* fortam reluarea animatiei */
+      el.classList.add('gliseaza');
+    });
     layers.forEach(function (l) {
       l.classList.toggle('on', parseInt(l.getAttribute('data-s'), 10) <= n);
     });
@@ -1541,7 +1560,18 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   window.addEventListener('scroll', function () {
     if (ticking) return;
     ticking = true;
-    window.requestAnimationFrame(function () { onScroll(); ticking = false; });
+    var rulat = false;
+    function ruleaza() {
+      if (rulat) return;
+      rulat = true;
+      ticking = false;
+      onScroll();
+    }
+    window.requestAnimationFrame(ruleaza);
+    /* plasa de siguranta: in browserele in-app si in economie de baterie
+       requestAnimationFrame poate sa nu ruleze deloc, iar fara asta
+       handler-ul de scroll ar ramane blocat definitiv */
+    setTimeout(ruleaza, 250);
   }, { passive: true });
   onScroll();
 
