@@ -13,7 +13,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
 /* ==========================================================================
@@ -62,6 +62,12 @@ body.no-scroll{overflow:hidden}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 button,input,select,textarea{font:inherit;color:inherit}
+/* b si strong la 600: nu incarcam si varianta 700 doar pentru cateva cuvinte */
+b,strong{font-weight:600}
+/* pe touch: fara flash gri la atingere, fara intarziere la tap */
+a,button,[role=button],input,select,textarea,label{
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
 p{margin:0}
 ul,ol{margin:0;padding:0;list-style:none}
 :focus-visible{outline:3px solid var(--amber);outline-offset:3px}
@@ -323,7 +329,8 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
 }
 .field input,.field select,.field textarea{
   width:100%;padding:13px 14px;border:1.5px solid var(--line);background:var(--sand);border-radius:var(--r);
-  font-size:15px;transition:border-color .2s var(--ease),background .2s var(--ease),box-shadow .2s var(--ease);
+  /* 16px: sub aceasta valoare, Safari pe iPhone face zoom automat cand intri in camp */
+  font-size:16px;transition:border-color .2s var(--ease),background .2s var(--ease),box-shadow .2s var(--ease);
 }
 .field textarea{min-height:108px;resize:vertical}
 .field select{
@@ -351,10 +358,12 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
 .footer .brand__name{color:#fff}
 .footer__about{font-size:14px;margin-top:14px;max-width:42ch;line-height:1.7}
 .footer h4{font-size:19px;color:#fff;margin-bottom:14px}
-.footer__links{display:grid;gap:8px}
-.footer__links a{font-size:14.5px;transition:color .2s var(--ease),padding-left .2s var(--ease)}
-.footer__links a:hover{color:var(--amber);padding-left:5px}
-.footer__contact{display:grid;gap:8px;font-size:14.5px}
+/* pe mobil linkurile din footer primesc inaltime de atins cu degetul */
+.footer__links{display:grid;gap:2px}
+.footer__links a{font-size:14.5px;padding:9px 0;transition:color .2s var(--ease),padding-left .2s var(--ease)}
+.footer__links a:hover{color:var(--amber)}
+.footer__contact{display:grid;gap:2px;font-size:14.5px}
+.footer__contact a,.footer__contact span{padding:8px 0}
 .footer__contact a:hover{color:var(--amber)}
 .socials{display:flex;gap:10px;margin-top:18px}
 .social{
@@ -1772,6 +1781,29 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   modal.querySelectorAll('[data-close]').forEach(function (el) {
     el.addEventListener('click', inchideModal);
   });
+
+  /* pe telefon: schimbi poza cu degetul, stanga-dreapta */
+  (function () {
+    var stage = modal.querySelector('.modal__stage');
+    var xStart = 0, yStart = 0, urmarim = false;
+    stage.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1) { urmarim = false; return; }
+      xStart = e.touches[0].clientX;
+      yStart = e.touches[0].clientY;
+      urmarim = true;
+    }, { passive: true });
+    stage.addEventListener('touchend', function (e) {
+      if (!urmarim) return;
+      urmarim = false;
+      var t = e.changedTouches[0];
+      var dx = t.clientX - xStart;
+      var dy = t.clientY - yStart;
+      /* doar daca miscarea e clar orizontala, ca sa nu blocam scroll-ul */
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        aratePoza(pozaCurenta + (dx < 0 ? 1 : -1));
+      }
+    }, { passive: true });
+  })();
   mPrev.addEventListener('click', function () { aratePoza(pozaCurenta - 1); });
   mNext.addEventListener('click', function () { aratePoza(pozaCurenta + 1); });
 
