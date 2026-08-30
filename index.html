@@ -83,6 +83,8 @@ h1,h2,h3,h4{
 .section--dark{background:var(--ink);color:var(--concrete)}
 .section--sand{background:var(--sand)}
 section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
+/* animatia de constructie la scroll ramane doar pe ecrane mari, unde are loc pe 2 coloane */
+#etape{display:none}
 
 /* eticheta mono - eticheta de sectiune, nu numerotare decorativa */
 .label{
@@ -575,6 +577,7 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
 
 @media (min-width:900px){
   .section{padding:96px 0}
+  #etape{display:block}
   .build{grid-template-columns:1fr 1fr;gap:54px}
   /* fara align-self:start - coloana trebuie sa se intinda ca sticky sa aiba pe unde calatori */
   .build__sticky{top:calc(var(--header-h) + 40px);padding:0;background:transparent;height:max-content}
@@ -645,11 +648,10 @@ section[id]{scroll-margin-top:calc(var(--header-h) + 6px)}
   <nav aria-label="Meniu mobil">
     <a href="#despre">Despre <i>01</i></a>
     <a href="#servicii">Servicii <i>02</i></a>
-    <a href="#etape">Etapele lucrarii <i>03</i></a>
-    <a href="#lucrari">Lucrari <i>04</i></a>
-    <a href="#proces">Cum lucram <i>05</i></a>
-    <a href="#garantii">Garantii <i>06</i></a>
-    <a href="#contact">Contact <i>07</i></a>
+    <a href="#lucrari">Lucrari <i>03</i></a>
+    <a href="#proces">Cum lucram <i>04</i></a>
+    <a href="#garantii">Garantii <i>05</i></a>
+    <a href="#contact">Contact <i>06</i></a>
   </nav>
   <div class="drawer__actions">
     <a class="btn btn--block" href="#contact">Cere o oferta</a>
